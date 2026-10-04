@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.vite/
+.vitest/
+.features-gen/
+test-results/
+playwright-report/
+.DS_Store
+
+# Local reference material and review artifacts
+.aop-work/
+sources/
+AGENTS.md
+.env
+.env.*
+!.env.example

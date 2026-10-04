@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "vue"],
+  "jsPlugins": [
+    {
+      "name": "folio-architecture",
+      "specifier": "./tooling/architecture/plugin.mjs"
+    }
+  ],
+  "rules": { "folio-architecture/boundaries": "error" },
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "sources/**",
+    ".aop-work/**",
+    ".features-gen/**",
+    "test-results/**",
+    ".vitest/**"
+  ]
+}

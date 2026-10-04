@@ -1,0 +1,114 @@
+@import 'tailwindcss';
+@import './tokens/primitives.css';
+@import './tokens/semantic.css';
+
+@theme inline {
+  --text-display: var(--type-display);
+  --text-heading: var(--type-heading);
+  --text-body: var(--type-body);
+  --text-caption: var(--type-caption);
+  --text-label: var(--type-label);
+  --spacing: var(--space-1);
+  --font-sans: var(--font-ui);
+  --color-surface: var(--surface);
+  --color-canvas: var(--canvas);
+  --color-surface-hover: var(--surface-hover);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-on: var(--accent-on);
+  --color-focus: var(--focus);
+  --radius-control: var(--token-radius-control);
+  --radius-panel: var(--token-radius-panel);
+  --radius-dialog: var(--token-radius-dialog);
+  --shadow-panel: var(--token-shadow-panel);
+  --shadow-dialog: var(--token-shadow-dialog);
+}
+@layer base {
+  html,
+  body,
+  #app {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100%;
+  }
+  body {
+    font-family: var(--font-ui);
+    background: var(--canvas);
+    color: var(--text);
+    font-size: var(--type-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+  button,
+  a,
+  input,
+  select {
+    outline-offset: 4px;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+  }
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+}
+@layer components {
+  .folio-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--shadow-panel);
+  }
+  .eyebrow {
+    font-size: var(--type-caption);
+    line-height: 1.5;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .dot-grid {
+    background-image: radial-gradient(circle, var(--grid) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@font-face {
+  font-family: Assistant;
+  src: url(/fonts/Assistant-Regular.woff2) format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Assistant;
+  src: url(/fonts/Assistant-SemiBold.woff2) format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: Excalifont;
+  src: url(/fonts/Excalifont-Regular.woff2) format('woff2');
+  font-display: swap;
+}

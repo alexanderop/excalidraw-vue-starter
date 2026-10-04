@@ -1,0 +1,41 @@
+{
+  "name": "excalidraw-vue-starter",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.2",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vue-tsc --noEmit && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "oxlint",
+    "test:unit": "vitest run --project unit",
+    "test:browser": "vitest run --project browser",
+    "test:e2e": "bddgen && playwright test",
+    "verify": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm test:unit && pnpm test:browser && pnpm test:e2e && pnpm build",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
+  "dependencies": {
+    "@lucide/vue": "1.52.0",
+    "reka-ui": "2.10.5",
+    "valibot": "1.5.0",
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "^22.0.0",
+    "@vitejs/plugin-vue": "latest",
+    "@vitest/browser-playwright": "5.0.3",
+    "oxfmt": "^0.71.0",
+    "oxlint": "1.86.0",
+    "playwright-bdd": "9.2.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "~5.9.3",
+    "vite": "8.3.2",
+    "vitest": "5.0.3",
+    "vitest-browser-vue": "3.1.0",
+    "vue-tsc": "latest"
+  },
+  "license": "MIT"
+}
