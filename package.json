@@ -11,9 +11,10 @@
     "test:unit": "vitest run --project unit",
     "test:browser": "vitest run --project browser",
     "test:e2e": "bddgen && playwright test",
-    "verify": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm test:unit && pnpm test:browser && pnpm test:e2e && pnpm build",
+    "verify": "pnpm format:check && pnpm typecheck && pnpm lint && pnpm test:unit && pnpm test:browser && pnpm test:e2e && pnpm test:pwa && pnpm build",
     "format": "oxfmt --write .",
-    "format:check": "oxfmt --check ."
+    "format:check": "oxfmt --check .",
+    "test:pwa": "playwright test --config playwright.pwa.config.ts"
   },
   "dependencies": {
     "@lucide/vue": "1.52.0",
@@ -33,6 +34,7 @@
     "tailwindcss": "4.3.3",
     "typescript": "~5.9.3",
     "vite": "8.3.2",
+    "vite-plugin-pwa": "^2.0.0",
     "vitest": "5.0.3",
     "vitest-browser-vue": "3.1.0",
     "vue-tsc": "latest"

@@ -75,3 +75,11 @@ Adapted Excalidraw SVG icons and welcome artwork retain the MIT license in `publ
 ## License
 
 MIT. Third-party assets retain their notices in `public/licenses/`.
+
+## Hosted PWA
+
+[Open the app](https://alexanderop.github.io/excalidraw-vue-starter/).
+
+After the first online visit, the workspace and its fonts are cached for offline use. Install through your browser's install action (on iOS: Share → Add to Home Screen). Drawing and document persistence are still outside this starter's scope. Updates activate after existing app windows close, avoiding an unexpected reload of session state.
+
+GitHub Actions runs all checks before deploying `main` to Pages. `VITE_BASE_PATH=/excalidraw-vue-starter/ pnpm build` builds the repository subpath; ordinary local builds use `/`. The service worker is only enabled in production builds. `pnpm test:pwa` verifies the subpath, manifest, icons, offline reload, and a second offline tab against an isolated production preview.
