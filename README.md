@@ -1,6 +1,6 @@
 # Excalidraw Vue Starter
 
-A Vue drawing-workspace foundation with a complete tool palette, shape defaults, theme controls, and an interactive design system. Drawing is intentionally not implemented yet.
+A Vue drawing-workspace foundation with a complete tool palette, shape defaults, theme controls, and an interactive design system. Draw rectangles with mouse, pen, or touch. Other drawing tools remain UI previews.
 
 ## Run
 
@@ -11,33 +11,38 @@ pnpm install
 pnpm dev
 ```
 
-Open the address printed by Vite. Open the workspace menu, then **Design system**, to inspect the live tokens and components. Preferences for theme and accent persist in browser localStorage. Canvas names, tool selection, zoom, and shape defaults last for the current session. No drawing is saved.
+Open the address printed by Vite. Open the workspace menu, then **Design system**, to inspect the live tokens and components. Preferences for theme and accent persist in browser localStorage. Canvas names, tool selection, zoom, and shape defaults last for the current session. Rectangles remain in memory for the current session. Reloading clears them.
 
 ## Available now
 
 - Tool selection by pointer or keyboard, tool lock, stroke/fill/style defaults, and opacity.
-- Zoom controls for the background grid, a grid toggle, and responsive style-panel access.
+- Rectangle dragging in every direction, live Rough.js preview, style snapshots, tool lock, and pointer capture.
+- Shift constrains a square; Alt draws from the center. Escape, tool changes, interruptions, and zoom changes cancel a draft.
+- Zoom controls apply to both rectangles and input coordinates, with a grid toggle and responsive style-panel access.
 - Workspace menu, library empty state, help with implemented shortcuts, and accessible dialogs.
 - Light/dark themes and three accent choices, reflected immediately in the editor and design board.
 - Disabled sharing, history, document actions, and library import communicate their future availability.
 
-Drawing, canvas object selection, document persistence, undo/redo, image import, exports, collaboration, and library imports are not implemented. Zoom currently changes only the background grid; there are no document objects yet.
+Only rectangles can be drawn. Canvas object selection, other shapes, document persistence, undo/redo, image import, exports, collaboration, and library imports are not implemented. Tiny gestures with either dimension below two document units are discarded.
 
 ## Architecture
 
 `src/app` composes features through their public entry points. Each feature owns its state and named commands. Vue readonly views prevent components from directly mutating feature state.
 
-| Feature        | Responsibility                                             |
-| -------------- | ---------------------------------------------------------- |
-| toolbox        | Tool registry, active tool, lock, new-shape defaults       |
-| viewport       | Zoom limits and grid visibility                            |
-| appearance     | Theme/accent state and injected preference storage         |
-| library        | Honest empty library presentation                          |
-| design-preview | Interactive composition of the real design-system controls |
+| Feature        | Responsibility                                                            |
+| -------------- | ------------------------------------------------------------------------- |
+| toolbox        | Tool registry, active tool, lock, new-shape defaults                      |
+| viewport       | Zoom limits, input coordinates, SVG scale, and grid visibility            |
+| drawing        | Rectangle geometry, active gesture, committed elements, and SVG rendering |
+| appearance     | Theme/accent state and injected preference storage                        |
+| library        | Honest empty library presentation                                         |
+| design-preview | Interactive composition of the real design-system controls                |
 
 Pure domain modules do not import Vue or browser APIs. The appearance feature has a synchronous `PreferencesPort`. Its localStorage adapter validates external data with Valibot and returns typed `Result` failures. The app constructs the adapter. Storage failures keep the workspace usable and produce a visible message.
 
-There is no document model or rendering engine yet. Future drawing can introduce those capabilities without treating the current UI state as document history.
+The drawing feature owns a discriminated idle/drawing gesture and its committed rectangle list. Geometry is pure TypeScript. IDs and stable Rough.js seeds come from an injected identity port; a renderer port keeps Rough.js details behind an adapter. The drawing surface owns native pointer capture and lifecycle cleanup. Shared shape styles are copied when a gesture starts. App composition selects the selection tool after a commit unless lock is active. Document history and persistence can get their own feature when they introduce independent policy.
+
+Dark mode adjusts only the SVG presentation with an inversion and hue rotation so dark ink remains visible. Stored stroke and fill values remain unchanged; their on-screen colors are adjusted in dark mode.
 
 ## Design system
 
@@ -60,7 +65,7 @@ pnpm verify
 
 Install Google Chrome once with `pnpm exec playwright install chrome`.
 
-Unit tests cover parsing, failure behavior, shortcut lookup, zoom limits, and architecture violations. Architecture fixtures run the real Oxlint CLI with the custom boundary plugin. Browser Mode tests exercise Vue controls and actual browser storage. Gherkin scenarios execute through Playwright against the production build on port 43719, including reload persistence, focus restoration, keyboard handling, and narrow-screen controls. CI installs Google Chrome and runs the same verification commands.
+Unit tests cover parsing, failure behavior, shortcut lookup, zoom limits, and architecture violations. Architecture fixtures run the real Oxlint CLI with the custom boundary plugin. Browser Mode tests exercise Vue controls, actual browser storage, native pointer capture outside the surface, lost capture, blocking, zoom changes, and unmount cleanup. Pure geometry and real Rough.js adapter tests cover constraints, stable output, style snapshots, and stroke/fill variants. Gherkin scenarios execute through Playwright against the production build on port 43719, including rectangle creation with real mouse input and native CDP touch, cancellation, modifier changes, zoom, style snapshots, tool lock, reload preferences, focus restoration, keyboard handling, and narrow-screen controls. CI installs Google Chrome and runs the same verification commands.
 
 Functional tests do not establish pixel-perfect appearance or full accessibility compliance. Desktop and narrow-layout visual inspection is a separate review step.
 
@@ -80,6 +85,6 @@ MIT. Third-party assets retain their notices in `public/licenses/`.
 
 [Open the app](https://alexanderop.github.io/excalidraw-vue-starter/).
 
-After the first online visit, the workspace and its fonts are cached for offline use. Install through your browser's install action (on iOS: Share → Add to Home Screen). Drawing and document persistence are still outside this starter's scope. Updates activate after existing app windows close, avoiding an unexpected reload of session state.
+After the first online visit, the workspace and its fonts are cached for offline use. Install through your browser's install action (on iOS: Share → Add to Home Screen). Rectangle drawing works offline; documents are not persisted. Updates activate after existing app windows close, avoiding an unexpected reload of session state.
 
-GitHub Actions runs all checks before deploying `main` to Pages. `VITE_BASE_PATH=/excalidraw-vue-starter/ pnpm build` builds the repository subpath; ordinary local builds use `/`. The service worker is only enabled in production builds. `pnpm test:pwa` verifies the subpath, manifest, icons, offline reload, and a second offline tab against an isolated production preview.
+GitHub Actions runs all checks before deploying `main` to Pages. `VITE_BASE_PATH=/excalidraw-vue-starter/ pnpm build` builds the repository subpath; ordinary local builds use `/`. The service worker is only enabled in production builds. `pnpm test:pwa` verifies the subpath, manifest, icons, offline reload with real rectangle drawing, and a second offline tab against an isolated production preview.

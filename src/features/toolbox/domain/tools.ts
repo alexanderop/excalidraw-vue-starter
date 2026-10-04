@@ -1,3 +1,5 @@
+import type { ShapeStyle } from '@/shared/shapeStyle';
+export type DraftStyle = ShapeStyle;
 export const tools = [
   { id: 'hand', label: 'Hand', shortcut: 'H', icon: 'Hand' },
   { id: 'selection', label: 'Selection', shortcut: 'V', icon: 'MousePointer2' },
@@ -15,15 +17,6 @@ export const tools = [
   { id: 'laser', label: 'Laser pointer', shortcut: 'K', icon: 'Sparkles' },
 ] as const;
 export type ToolId = (typeof tools)[number]['id'];
-export type DraftStyle = {
-  readonly stroke: string;
-  readonly fill: string;
-  readonly width: 1 | 2 | 4;
-  readonly line: 'solid' | 'dashed' | 'dotted';
-  readonly roughness: 'clean' | 'natural' | 'sketch';
-  readonly opacity: number;
-  readonly corners: 'round' | 'sharp';
-};
 export const initialStyle: DraftStyle = {
   stroke: '#1e1e1e',
   fill: 'transparent',

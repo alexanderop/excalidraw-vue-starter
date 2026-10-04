@@ -207,6 +207,7 @@
 }
 
 .interaction-hint {
+  pointer-events: none;
   position: absolute;
   top: 72px;
   left: 50%;
@@ -763,4 +764,17 @@
 }
 .properties > fieldset:last-of-type {
   margin-bottom: 2px;
+}
+
+.mobile-zoom {
+  display: none;
+}
+@media (max-width: 740px) {
+  .editor-menu .mobile-zoom {
+    display: flex;
+    align-items: center;
+  }
+  .editor-menu .mobile-zoom button {
+    justify-content: center;
+  }
 }

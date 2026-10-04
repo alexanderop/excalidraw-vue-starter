@@ -14,9 +14,11 @@ Then('the rectangle tool is selected', async ({ page }) => {
     page.getByRole('button', { name: 'Rectangle (R)', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true');
 });
-Then('the workspace explains that drawing comes next', async ({ page }) => {
+Then('the workspace explains how to draw rectangles', async ({ page }) => {
   await expect(
-    page.getByText('UI foundation — drawing comes next'),
+    page.getByText(
+      'Drag to draw · Shift for square · Alt from center · Escape to cancel',
+    ),
   ).toBeVisible();
 });
 When('I switch to the dark theme', async ({ page }) => {

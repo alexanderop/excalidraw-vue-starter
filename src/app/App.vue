@@ -28,22 +28,30 @@ import IconButton from '@/design-system/components/IconButton.vue';
 import UiButton from '@/design-system/components/UiButton.vue';
 import UiDialog from '@/design-system/components/UiDialog.vue';
 import { createEditor } from './createEditor';
+import {
+  DrawingSurface,
+  browserIdentity,
+  roughRenderer,
+} from '@/features/drawing/public';
+const renderer = roughRenderer();
 const editor = createEditor(
   localStoragePreferences({
     getItem: (key) => window.localStorage.getItem(key),
     setItem: (key, value) => window.localStorage.setItem(key, value),
   }),
+  browserIdentity(),
 );
-const { toolbox, viewport, appearance } = editor;
+const { toolbox, viewport, appearance, drawing } = editor;
 const screen = ref<'editor' | 'design'>('editor');
 const overlay = ref<'help' | 'library' | 'menu' | null>(null);
 const propertiesOpen = ref(false);
+const toolPopupOpen = ref(false);
 const stylesTrigger = ref<InstanceType<typeof IconButton> | null>(null);
 const overlayContent = {
   menu: {
     title: 'Workspace',
     description:
-      'Your canvas essentials. Document actions arrive with drawing.',
+      'Draw rectangles in this session. Document actions are not available yet.',
   },
   library: {
     title: 'Your library',
@@ -52,7 +60,7 @@ const overlayContent = {
   help: {
     title: 'Make yourself at home',
     description:
-      'Choose a tool with a single key. Drawing will arrive in the next iteration.',
+      'Press R and drag to draw a rectangle. Other tools are previews. Drawings are not saved.',
   },
 };
 function closeStyles() {
@@ -200,7 +208,35 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey));
       >
         <Grid2X2 :size="16" />Canvas grid
       </button>
-      <p class="menu-scope">UI foundation · Drawing comes next</p>
+      <button
+        :aria-pressed="toolbox.state.locked"
+        @click="
+          toolbox.toggleLock();
+          closeMenu();
+        "
+      >
+        Keep tool selected
+      </button>
+      <div class="mobile-zoom" role="group" aria-label="Canvas zoom">
+        <button
+          aria-label="Zoom out"
+          :disabled="viewport.state.zoom === 25"
+          @click="viewport.zoomOut()"
+        >
+          −
+        </button>
+        <button aria-label="Reset zoom" @click="viewport.resetZoom()">
+          {{ viewport.state.zoom }}%
+        </button>
+        <button
+          aria-label="Zoom in"
+          :disabled="viewport.state.zoom === 400"
+          @click="viewport.zoomIn()"
+        >
+          +
+        </button>
+      </div>
+      <p class="menu-scope">Rectangles only · Drawings are not saved</p>
     </section>
     <main
       class="canvas-area absolute inset-0"
@@ -210,8 +246,20 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey));
       }"
       aria-label="Canvas workspace"
     >
+      <DrawingSurface
+        :drawing="drawing"
+        :renderer="renderer"
+        :active="toolbox.state.activeTool === 'rectangle'"
+        :blocked="overlay !== null || menuPopover || toolPopupOpen"
+        :zoom="viewport.state.zoom"
+        :style="toolbox.state.style"
+        @committed="editor.rectangleCommitted"
+      />
       <div class="workspace-controls">
-        <ToolPalette :toolbox="toolbox" />
+        <ToolPalette
+          :toolbox="toolbox"
+          @popup-change="toolPopupOpen = $event"
+        />
         <div
           v-if="
             !['selection', 'hand', 'eraser', 'laser'].includes(
@@ -255,7 +303,11 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey));
         </div>
       </div>
       <p class="interaction-hint scope-hint">
-        UI foundation — drawing comes next
+        {{
+          toolbox.state.activeTool === 'rectangle'
+            ? 'Drag to draw · Shift for square · Alt from center · Escape to cancel'
+            : 'Choose Rectangle (R) to draw · Other tools are previews'
+        }}
       </p>
     </main>
     <footer class="editor-footer">
@@ -281,11 +333,11 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey));
         </div>
         <div
           class="history-group panel flex items-center"
-          title="History becomes available when drawing is added"
+          title="Undo and redo are not implemented yet"
         >
-          <IconButton label="Undo unavailable until drawing is added" disabled
+          <IconButton label="Undo unavailable" disabled
             ><ChromeIcon name="undo" /></IconButton
-          ><IconButton label="Redo unavailable until drawing is added" disabled
+          ><IconButton label="Redo unavailable" disabled
             ><ChromeIcon name="redo"
           /></IconButton>
         </div>
@@ -293,7 +345,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey));
       <div class="footer-right flex items-center">
         <span
           class="foundation-indicator"
-          title="Local UI foundation — drawing is not implemented"
+          title="Session-only rectangles. Drawings are not saved."
           ><ShieldCheck :size="18" /></span
         ><IconButton label="Help and shortcuts" @click="overlay = 'help'"
           ><CircleHelp :size="16"
@@ -335,6 +387,9 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey));
           <span>{{ tool.label }}</span
           ><kbd>{{ tool.shortcut }}</kbd>
         </div>
+        <div><span>Square rectangle</span><kbd>Shift</kbd></div>
+        <div><span>Draw from center</span><kbd>Alt</kbd></div>
+        <div><span>Cancel drawing</span><kbd>Esc</kbd></div>
         <div><span>Open this help</span><kbd>?</kbd></div>
       </div>
       <p class="help-note">
