@@ -1,3 +1,4 @@
+import { WorkspacePage } from '../e2e/WorkspacePage';
 import { test, expect } from '@playwright/test';
 test('repository subpath installs its offline shell and reopens without network', async ({
   page,
@@ -32,6 +33,9 @@ test('repository subpath installs its offline shell and reopens without network'
   await expect(
     page.getByRole('button', { name: 'Rectangle (R)', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true');
+  const workspace = new WorkspacePage(page);
+  await workspace.drag();
+  await workspace.expectCount(1);
   const second = await context.newPage();
   await second.goto(page.url());
   await expect(second.getByRole('toolbar')).toBeVisible();

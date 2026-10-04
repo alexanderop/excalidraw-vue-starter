@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { drawingPointer } from './tests/browser/drawingCommands.js';
 import { playwright } from '@vitest/browser-playwright';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
@@ -23,6 +24,7 @@ export default defineConfig({
           include: ['tests/browser/**/*.test.ts'],
           browser: {
             enabled: true,
+            commands: { drawingPointer },
             provider: playwright({ launchOptions: { channel: 'chrome' } }),
             headless: true,
             instances: [{ browser: 'chromium' }],

@@ -3,7 +3,7 @@ Feature: Explore the drawing workspace foundation
     Given I open a fresh workspace
     When I choose the rectangle tool
     Then the rectangle tool is selected
-    And the workspace explains that drawing comes next
+    And the workspace explains how to draw rectangles
 
   Scenario: Keep my preferred appearance
     Given I open a fresh workspace

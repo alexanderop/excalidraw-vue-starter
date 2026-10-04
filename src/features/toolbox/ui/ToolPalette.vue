@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { PopoverRoot, PopoverTrigger, PopoverContent } from 'reka-ui';
 import { EllipsisVertical, Image, Frame, Sparkles } from '@lucide/vue';
 import IconButton from '@/design-system/components/IconButton.vue';
@@ -8,6 +8,8 @@ import { tools } from '../domain/tools';
 import type { Toolbox } from '../application/createToolbox';
 defineProps<{ toolbox: Toolbox }>();
 const moreOpen = ref(false);
+const emit = defineEmits<{ popupChange: [open: boolean] }>();
+watch(moreOpen, (open) => emit('popupChange', open));
 const shapeGroupOpen = ref(false);
 const primary = tools.filter(
   (tool) => !['image', 'frame', 'laser'].includes(tool.id),
